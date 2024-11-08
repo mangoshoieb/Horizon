@@ -11,46 +11,49 @@ export function cn(...inputs: ClassValue[]) {
 // FORMAT DATE TIME
 export const formatDateTime = (dateString: Date) => {
   const dateTimeOptions: Intl.DateTimeFormatOptions = {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
+    weekday: "short", // abbreviated weekday name (e.g., 'Mon')
+    month: "short", // abbreviated month name (e.g., 'Oct')
+    day: "numeric", // numeric day of the month (e.g., '25')
+    hour: "numeric", // numeric hour (e.g., '8')
+    minute: "numeric", // numeric minute (e.g., '30')
+    hour12: true, // use 12-hour clock (true) or 24-hour clock (false)
   };
 
   const dateDayOptions: Intl.DateTimeFormatOptions = {
-    weekday: "short",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
+    weekday: "short", // abbreviated weekday name (e.g., 'Mon')
+    year: "numeric", // numeric year (e.g., '2023')
+    month: "2-digit", // abbreviated month name (e.g., 'Oct')
+    day: "2-digit", // numeric day of the month (e.g., '25')
   };
 
   const dateOptions: Intl.DateTimeFormatOptions = {
-    month: "short",
-    year: "numeric",
-    day: "numeric",
+    month: "short", // abbreviated month name (e.g., 'Oct')
+    year: "numeric", // numeric year (e.g., '2023')
+    day: "numeric", // numeric day of the month (e.g., '25')
   };
 
   const timeOptions: Intl.DateTimeFormatOptions = {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
+    hour: "numeric", // numeric hour (e.g., '8')
+    minute: "numeric", // numeric minute (e.g., '30')
+    hour12: true, // use 12-hour clock (true) or 24-hour clock (false)
   };
 
-  const formattedDateTime = new Date(dateString).toLocaleString(
+  const formattedDateTime: string = new Date(dateString).toLocaleString(
     "en-US",
     dateTimeOptions
   );
-  const formattedDateDay = new Date(dateString).toLocaleString(
+
+  const formattedDateDay: string = new Date(dateString).toLocaleString(
     "en-US",
     dateDayOptions
   );
-  const formattedDate = new Date(dateString).toLocaleString(
+
+  const formattedDate: string = new Date(dateString).toLocaleString(
     "en-US",
     dateOptions
   );
-  const formattedTime = new Date(dateString).toLocaleString(
+
+  const formattedTime: string = new Date(dateString).toLocaleString(
     "en-US",
     timeOptions
   );
@@ -72,10 +75,10 @@ export function formatAmount(amount: number): string {
 
   return formatter.format(amount);
 }
+export const parseStringify = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
-export const parseStringify = (value: string) => JSON.parse(JSON.stringify(value));
 
-export const removeSpecialCharacters = (value: string): string => {
+export const removeSpecialCharacters = (value: string) => {
   return value.replace(/[^\w\s]/gi, "");
 };
 
@@ -85,7 +88,7 @@ interface UrlQueryParams {
   value: string;
 }
 
-export function formUrlQuery({ params, key, value }: UrlQueryParams): string {
+export function formUrlQuery({ params, key, value }: UrlQueryParams) {
   const currentUrl = qs.parse(params);
 
   currentUrl[key] = value;
@@ -98,8 +101,6 @@ export function formUrlQuery({ params, key, value }: UrlQueryParams): string {
     { skipNull: true }
   );
 }
-
-type AccountTypes = "depository" | "credit" | "default";
 
 export function getAccountTypeColors(type: AccountTypes) {
   switch (type) {
@@ -129,34 +130,31 @@ export function getAccountTypeColors(type: AccountTypes) {
   }
 }
 
-interface Transaction {
-  category: string;
-}
-
-interface CategoryCount {
-  name: string;
-  count: number;
-  totalCount: number;
-}
-
 export function countTransactionCategories(
-  transactions: Transaction[] | null
+  transactions: Transaction[]
 ): CategoryCount[] {
   const categoryCounts: { [category: string]: number } = {};
   let totalCount = 0;
 
-  if (transactions) {
+  // Iterate over each transaction
+  transactions &&
     transactions.forEach((transaction) => {
+      // Extract the category from the transaction
       const category = transaction.category;
+
+      // If the category exists in the categoryCounts object, increment its count
       if (categoryCounts.hasOwnProperty(category)) {
         categoryCounts[category]++;
       } else {
+        // Otherwise, initialize the count to 1
         categoryCounts[category] = 1;
       }
+
+      // Increment total count
       totalCount++;
     });
-  }
 
+  // Convert the categoryCounts object to an array of objects
   const aggregatedCategories: CategoryCount[] = Object.keys(categoryCounts).map(
     (category) => ({
       name: category,
@@ -165,42 +163,49 @@ export function countTransactionCategories(
     })
   );
 
+  // Sort the aggregatedCategories array by count in descending order
   aggregatedCategories.sort((a, b) => b.count - a.count);
 
   return aggregatedCategories;
 }
 
-export function extractCustomerIdFromUrl(url: string): string {
+export function extractCustomerIdFromUrl(url: string) {
+  // Split the URL string by '/'
   const parts = url.split("/");
+
+  // Extract the last part, which represents the customer ID
   const customerId = parts[parts.length - 1];
+
   return customerId;
 }
 
-export function encryptId(id: string): string {
+export function encryptId(id: string) {
   return btoa(id);
 }
 
-export function decryptId(id: string): string {
+export function decryptId(id: string) {
   return atob(id);
 }
 
-export const getTransactionStatus = (date: Date): string => {
+export const getTransactionStatus = (date: Date) => {
   const today = new Date();
   const twoDaysAgo = new Date(today);
   twoDaysAgo.setDate(today.getDate() - 2);
+
   return date > twoDaysAgo ? "Processing" : "Success";
 };
-
-export const authFormSchema = (type: string) =>
-  z.object({
-    firstName: type === "sign-in" ? z.string().optional() : z.string().min(3),
-    lastName: type === "sign-in" ? z.string().optional() : z.string().min(3),
-    address1: type === "sign-in" ? z.string().optional() : z.string().max(50),
-    city: type === "sign-in" ? z.string().optional() : z.string().max(50),
-    state: type === "sign-in" ? z.string().optional() : z.string().min(2).max(2),
-    postalCode: type === "sign-in" ? z.string().optional() : z.string().min(3).max(6),
-    dateOfBirth: type === "sign-in" ? z.string().optional() : z.string().min(3),
-    ssn: type === "sign-in" ? z.string().optional() : z.string().min(3),
-    email: z.string().email(),
-    password: z.string().min(8),
-  });
+export const authFormSchema = (type: string) => z.object({
+  // sign up
+  firstName: type === 'sign-in' ? z.string().optional() : z.string().min(3),
+  lastName: type === 'sign-in' ? z.string().optional() : z.string().min(3),
+  address1: type === 'sign-in' ? z.string().optional() : z.string().max(50),
+  city: type === 'sign-in' ? z.string().optional() : z.string().max(50),
+  state: type === 'sign-in' ? z.string().optional() : z.string().min(2).max(2),
+  postalCode: type === 'sign-in' ? z.string().optional() : z.string().min(3).max(6),
+  dateOfBirth: type === 'sign-in' ? z.string().optional() : z.string().min(3),
+  ssn: type === 'sign-in' ? z.string().optional() : z.string().min(3),
+  // both
+  email: z.string().email(),
+  password: z.string().min(8),
+})
+  
