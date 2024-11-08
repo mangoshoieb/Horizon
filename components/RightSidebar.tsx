@@ -26,7 +26,7 @@ const RightSidebar = ({ user, transactions, banks }: RightSidebarProps) => {
         <div className="w-full flex justify-between ">
           <h2 className="header-2">My Banks</h2>
           <Link href="/" className="flex gap-2">
-            <Image src={"/icons/plus.svg"} width={20} height={20} alt="plus" />
+            <Image src={"/icons/plus.svg"} width={20} height={21} alt="plus" />
             <h2 className="font-blod text-14 text-gray-600">Add Bank</h2>
           </Link>
         </div>

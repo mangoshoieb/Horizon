@@ -23,6 +23,7 @@ import { authFormSchema } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { getLoggedInUser, signIn, signUp } from "@/lib/actions/user.action";
+import OutlinedAlerts from "./ui/Alert";
 const AuthForm = ({ type }: { type: string }) => {
   const [user, setUser] = useState(null);
   const [isloading, setIsloading] = useState(false);
@@ -55,8 +56,8 @@ const AuthForm = ({ type }: { type: string }) => {
           email: data.email,
           password: data.password,
         });
-
-        if (response) router.push("/");
+          
+        if (response) router.replace("/");
       }
     } catch (err) {
       console.log(err);
