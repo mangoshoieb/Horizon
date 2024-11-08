@@ -52,7 +52,7 @@ declare type NewUserParams = {
 declare type Account = {
   id?: string;
   availableBalance?: number;
-  currentBalance?: number|string|null;
+  currentBalance: number;
   officialName?: string;
   mask?: string;
   institutionId?: string;
